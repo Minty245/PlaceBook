@@ -107,8 +107,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     val layoutManager = LinearLayoutManager(this)
     databinding.drawerViewMaps.bookmarkRecyclerView.layoutManager = layoutManager
     bookmarkListAdapter = BookmarkListAdapter(null, this)
-    databinding.drawerViewMaps.bookmarkRecyclerView.adapter =
-      bookmarkListAdapter
+    databinding.drawerViewMaps.bookmarkRecyclerView.adapter = bookmarkListAdapter
   }
 
   private fun displayPoi(pointOfInterest: PointOfInterest) {
@@ -284,15 +283,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
   }
 
   fun moveToBookmark(bookmark: MapsViewModel.BookmarkView) {
-    // 1
+    databinding.drawerLayout.closeDrawer(databinding.drawerViewMaps.drawerView)
 
-    databinding.drawerLayout.closeDrawer(databinding.drawerViewMaps.
-    drawerView)
-    // 2
     val marker = markers[bookmark.id]
-    // 3
+
     marker?.showInfoWindow()
-    // 4
+
     val location = Location("")
     location.latitude = bookmark.location.latitude
     location.longitude = bookmark.location.longitude
@@ -300,7 +296,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
   }
 
   private fun searchAtCurrentLocation() {
-    // 1
     val placeFields = listOf(
       Place.Field.ID,
       Place.Field.NAME,
@@ -309,16 +304,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
       Place.Field.LAT_LNG,
       Place.Field.ADDRESS,
       Place.Field.TYPES)
-    // 2
+
     val bounds =
       RectangularBounds.newInstance(map.projection.visibleRegion.latLngBounds)
     try {
-      // 3
       val intent = Autocomplete.IntentBuilder(
         AutocompleteActivityMode.OVERLAY, placeFields)
         .setLocationBias(bounds)
         .build(this)
-      // 4
+
       startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
     } catch (e: GooglePlayServicesRepairableException) {
       Toast.makeText(this, "Problems Searching",
@@ -334,20 +328,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     data: Intent?
   ) {
     super.onActivityResult(requestCode, resultCode, data)
-    // 1
     when (requestCode) {
       AUTOCOMPLETE_REQUEST_CODE ->
-        // 2
         if (resultCode == Activity.RESULT_OK && data != null) {
-          // 3
           val place = Autocomplete.getPlaceFromIntent(data)
-          // 4
           val location = Location("")
           location.latitude = place.latLng?.latitude ?: 0.0
           location.longitude = place.latLng?.longitude ?: 0.0
           updateMapToLocation(location)
           showProgress()
-          // 5
           displayPoiGetPhotoStep(place)
         }
     }
